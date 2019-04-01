@@ -7,5 +7,7 @@ if [[ ! -e arduino-cli ]]; then
   rm arduino-cli.zip
   mv arduino-cli* arduino-cli
 fi
+easy_install -U pyserial
 ./arduino-cli --config-file ../arduino-cli.yaml core update-index
 ./arduino-cli --config-file ../arduino-cli.yaml core install arduino:samd
+./arduino-cli --config-file ../arduino-cli.yaml core install adafruit:samd
