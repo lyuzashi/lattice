@@ -8,10 +8,27 @@ ARM_TOOLS_DIR=$(HOME)/Library/Arduino15/packages/arduino/tools/arm-none-eabi-gcc
 CMSIS_DIR=$(HOME)/Library/arduino15/packages/arduino/tools/CMSIS/4.5.0/CMSIS
 CMSIS_ATMEL_DIR=$(HOME)/Library/arduino15/packages/arduino/tools/CMSIS-Atmel/1.2.0/CMSIS
 # BUNDLED_BOSSA_DIR=$(HOME)/Library/arduino15/packages/arduino/tools/bossac
-BOSSA=$(HOME)/Library/arduino15/packages/arduino/tools/bossac/1.7.0/bossac
+BOSSA=$(HOME)/Library/arduino15/packages/arduino/tools/bossac/1.8.0-48-gb176eee/bossac
 ARDMK_VENDOR=adafruit
 BOARD_TAG=adafruit_trellis_m4
 ARCHITECTURE=samd
+
+
+# To swtich to default ARDMK_VENDOR value, so that most of the above can be computed to arduino
+# ALTERNATE_CORE_PATH may need to be defined
+# - ARDUINO_CORE_PATH
+#   - CMSIS_DIR
+#   - CMSIS_ATMEL_DIR
+#   - BOOTLOADER_PARENT
+#   - SAM_CORE_PATH
+#   - SAM_LIBSAM_PATH
+#   - ARDUINO_PLATFORM_LIB_PATH
+#   - OPENOCD_OPTS
+#   - LINKER_SCRIPTS
+#   - OTHER_LIBS
+# - BOARDS_TXT
+#   - PARSE_BOARD
+
 
 # This variable is local, name it however you want
 SOURCE_FOLDERS=src
@@ -32,6 +49,8 @@ LOCAL_INO_SRCS=$(foreach dir,$(SOURCE_FOLDERS),$(wildcard $(dir)/*.ino))
 
 # Can it be reproduced with
 #  BOSSA_OPTS += -d --info --erase --write --verify --reset
+
+BOSSA_OPTS = -d --info --erase --write --verify --reset --offset=0x4000
 
 # SKETCH = $(ROOT)/src/Lattice.ino
 # CUSTOM_LIBS=$(ROOT)/libs
