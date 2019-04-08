@@ -1,34 +1,18 @@
 ROOT := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-ARDUINO_DIR=$(HOME)/Library/arduino15
-ARDUINO_PACKAGE_DIR=$(HOME)/Library/arduino15/packages
-# ALTERNATE_CORE_PATH=$(HOME)/Library/arduino15/packages/adafruit/hardware/samd/1.2.9
-#
-ARM_TOOLS_DIR=$(HOME)/Library/Arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1
-CMSIS_DIR=$(HOME)/Library/arduino15/packages/arduino/tools/CMSIS/4.5.0/CMSIS
-CMSIS_ATMEL_DIR=$(HOME)/Library/arduino15/packages/arduino/tools/CMSIS-Atmel/1.2.0/CMSIS
-# BUNDLED_BOSSA_DIR=$(HOME)/Library/arduino15/packages/arduino/tools/bossac
-BOSSA=$(HOME)/Library/arduino15/packages/arduino/tools/bossac/1.8.0-48-gb176eee/bossac
+ARDUINO_DIR:=$(shell ./bin/arduino-cli --config-file ../arduino-cli.yaml config dump | grep 'arduino_data' | sed 's/^arduino_data: \(.*\)$$/\1/')
+ARDUINO_PACKAGE_DIR=$(ARDUINO_DIR)/packages
+ARDUINO_SKETCHBOOK=$(ROOT)
+
 ARDMK_VENDOR=adafruit
 BOARD_TAG=adafruit_trellis_m4
 ARCHITECTURE=samd
 
+CMSIS_ATMEL_VER=1.2.0
 
-# To swtich to default ARDMK_VENDOR value, so that most of the above can be computed to arduino
-# ALTERNATE_CORE_PATH may need to be defined
-# - ARDUINO_CORE_PATH
-#   - CMSIS_DIR
-#   - CMSIS_ATMEL_DIR
-#   - BOOTLOADER_PARENT
-#   - SAM_CORE_PATH
-#   - SAM_LIBSAM_PATH
-#   - ARDUINO_PLATFORM_LIB_PATH
-#   - OPENOCD_OPTS
-#   - LINKER_SCRIPTS
-#   - OTHER_LIBS
-# - BOARDS_TXT
-#   - PARSE_BOARD
-
+BUNDLED_BOSSA_DIR=$(ARDUINO_PACKAGE_DIR)/$(ARDMK_VENDOR)/tools/bossac
+BOSSA_VER=$(shell echo "$(wildcard $(BUNDLED_BOSSA_DIR)/*)" | xargs -n 1 basename | sort -V | tail -1)
+BOSSA = $(BUNDLED_BOSSA_DIR)/$(BOSSA_VER)/bossac
 
 # This variable is local, name it however you want
 SOURCE_FOLDERS=src
@@ -38,40 +22,6 @@ SOURCE_FOLDERS=src
 # LOCAL_CPP_SRCS=$(foreach dir,$(SOURCE_FOLDERS),$(wildcard $(dir)/*.cpp))
 LOCAL_INO_SRCS=$(foreach dir,$(SOURCE_FOLDERS),$(wildcard $(dir)/*.ino))
 
-# Arduino.app uses the following command to successfully upload
-# /Users/ben/Library/Arduino15/packages/arduino/tools/bossac/1.8.0-48-gb176eee/bossac -i -d --port=cu.usbmodem14101 -U -i --offset=0x4000 -w -v /var/folders/w0/mnr4bl3x3yz0bjvz8x2rrnpc0000gn/T/arduino_build_619717/neopixel_test.ino.bin -R 
-
-# This makefile uses this command and it doesn't appear to do anything, then fails "no device found"
-# /Users/ben/Library/arduino15/packages/arduino/tools/bossac/1.7.0/bossac -d --info --erase --write --verify --reset --port=tty.usbmodem14101 build-adafruit_trellis_m4/lattice.bin
-
-# This command works!
-# /Users/ben/Library/Arduino15/packages/arduino/tools/bossac/1.8.0-48-gb176eee/bossac -i -d --port=tty.usbmodem14101 -U -i --offset=0x4000 -w -v ./build-adafruit_trellis_m4/lattice.bin -R
-
-# Can it be reproduced with
-#  BOSSA_OPTS += -d --info --erase --write --verify --reset
-
 BOSSA_OPTS = -d --info --erase --write --verify --reset --offset=0x4000
-
-# SKETCH = $(ROOT)/src/Lattice.ino
-# CUSTOM_LIBS=$(ROOT)/libs
-
-# EXCLUDE_DIRS=$(wildcard $(ARDUINO_LIBS)/*/tests) $(wildcard $(CUSTOM_LIBS)/*/tests)
-
-# UPLOAD_PORT ?= $(shell ls -1tr /dev/tty.usb* 2>/dev/null | tail -1)
-
-# For versions <= 2.4.0
-# FLASH_DEF=1M0
-# For versions 2.4.3+
-# FLASH_DEF=1M
-# UPLOAD_SPEED="115200"
-
-# FLASH_MODE=dout
-# LWIP_VARIANT=Prebuilt (v1.4 Higher Bandwidth)
-
-# NAME=GardenLights
-# TYPE=BASIC
-
-# BUILD_EXTRA_FLAGS="-DTYPE_$(TYPE)"
-# BUILD_EXTRA_FLAGS+="-DNAME=\"$(NAME)\""
 
 include $(ROOT)/utils/ArduinoMakefile/Sam.mk
