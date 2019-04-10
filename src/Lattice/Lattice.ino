@@ -32,10 +32,6 @@ int last_ybend = 0;
 
 Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
-float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp);
-
-uint32_t Wheel(byte WheelPos);
-
 void setup(){
   Serial.begin(115200);
   //while (!Serial);
