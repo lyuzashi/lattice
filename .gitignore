@@ -1,2 +1,5 @@
 .vscode/
 build-adafruit_trellis_m4/
+build/
+libraries/
+bin/

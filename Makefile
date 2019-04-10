@@ -16,13 +16,9 @@ BUNDLED_BOSSA_DIR=$(ARDUINO_PACKAGE_DIR)/$(ARDMK_VENDOR)/tools/bossac
 BOSSA_VER=$(shell echo "$(wildcard $(BUNDLED_BOSSA_DIR)/*)" | xargs -n 1 basename | sort -V | tail -1)
 BOSSA = $(BUNDLED_BOSSA_DIR)/$(BOSSA_VER)/bossac
 
-U8G_PATH:=$(ROOT)/libraries/u8g2/csrc/
-U8G_CPP_PATH:=$(ROOT)/libraries/u8g2/cppsrc/
+$(shell ./utils/uDino-Preprocessor/preprocessor.rb ./src/Lattice ./build)
 
-CPPFLAGS += -I. -I$(U8G_PATH) -I$(U8G_CPP_PATH)
-
-# This variable is local, name it however you want
-SOURCE_FOLDERS=src $(U8G_PATH) $(U8G_CPP_PATH)
+SOURCE_FOLDERS=build
 
 # These two are used by Arduino.mk
 LOCAL_C_SRCS=$(foreach dir,$(SOURCE_FOLDERS),$(wildcard $(dir)/*.c))
